@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseInterceptors } from '@nestjs/common';
 import { GetUserByIdService } from './services/get-user-by-id.service';
 import { CreateUserService } from './services/create-user.service';
 import { CreateUserDTO } from './dtos/create-user.dto';
@@ -8,7 +8,9 @@ import { ListUsersService } from './services/list-users.service';
 import { DeleteUserByIdService } from './services/delete-user-by-id.service';
 import { UpdateUserDTO } from './dtos/update-user.dto';
 import { UpdateUserService } from './services/update-user.service';
+import { HttpLoggingInterceptor } from '@/common/middlewares/logging.interceptor';
 
+@UseInterceptors(HttpLoggingInterceptor)
 @Controller('users')
 export class UserController {
   constructor(
