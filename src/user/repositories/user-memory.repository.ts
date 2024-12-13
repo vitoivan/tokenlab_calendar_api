@@ -1,6 +1,7 @@
 import { UserRepository } from '../ports/user-repository';
 import { UserModel } from '../models/user.model';
 import { ListUsersParamsDTO } from '../dtos/list-users-params.dto';
+import { EventModel } from '@/events/models/event.model';
 
 export class UserMemoryRepository implements UserRepository {
   public users: UserModel[] = [];

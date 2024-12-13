@@ -10,9 +10,11 @@ import { DeleteUserByEmailService } from './services/delete-user-by-email.servic
 import { ListUsersService } from './services/list-users.service';
 import { UpdateUserService } from './services/update-user.service';
 import { PrismaModule } from '@/common/prisma/prisma.module';
+import { ListUserEventsService } from './services/list-user-events.service';
+import { EventsModule } from '@/events/events.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, EventsModule],
   controllers: [UserController],
   providers: [
     {
@@ -26,6 +28,7 @@ import { PrismaModule } from '@/common/prisma/prisma.module';
     DeleteUserByEmailService,
     UpdateUserService,
     ListUsersService,
+    ListUserEventsService,
   ],
   exports: [
     GetUserByIdService,
@@ -35,6 +38,7 @@ import { PrismaModule } from '@/common/prisma/prisma.module';
     DeleteUserByEmailService,
     UpdateUserService,
     ListUsersService,
+    ListUserEventsService,
   ],
 })
 export class UserModule {}

@@ -10,6 +10,8 @@ import { UpdateUserDTO } from './dtos/update-user.dto';
 import { UpdateUserService } from './services/update-user.service';
 import { HttpLoggingInterceptor } from '@/common/middlewares/logging.interceptor';
 import { Public } from '@/common/decorators/public';
+import { ListUserEventsDTO } from './dtos/list-user-events.dto';
+import { ListUserEventsService } from './services/list-user-events.service';
 
 @UseInterceptors(HttpLoggingInterceptor)
 @Controller('users')
@@ -17,6 +19,7 @@ export class UserController {
   constructor(
     private readonly getUserByIdService: GetUserByIdService,
     private readonly listUsersService: ListUsersService,
+    private readonly listUserEventsService: ListUserEventsService,
     private readonly createUserService: CreateUserService,
     private readonly updateUserService: UpdateUserService,
     private readonly deleteUserByIdService: DeleteUserByIdService,
@@ -25,6 +28,11 @@ export class UserController {
   @Get()
   async list(@Query() dto: ListUsersParamsDTO) {
     return await this.listUsersService.execute(dto);
+  }
+
+  @Get('/:id/events')
+  async listUserEvents(@Param('id') userId: number, @Query() dto: ListUserEventsDTO) {
+    return await this.listUserEventsService.execute(userId, dto);
   }
 
   @Get('/:id')

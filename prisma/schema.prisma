@@ -14,13 +14,46 @@ datasource db {
 }
 
 model User {
-  id        BigInt   @id @default(autoincrement())
+  id        BigInt      @id @default(autoincrement())
   name      String
-  email     String   @unique
+  email     String      @unique
   password  String
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+  EventUser EventUser[]
+  Event     Event[]
+
+  @@index([email], map: "user_email_idx")
+  @@index([name], map: "user_name_idx")
+  @@map("users")
+}
+
+model Event {
+  id          BigInt      @id @default(autoincrement())
+  name        String      @db.VarChar(255)
+  description String      @default("")
+  start       DateTime
+  end         DateTime
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  ownerId     BigInt
+  owner       User        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  EventUser   EventUser[]
+
+  @@index([start, end], map: "event_start_end_idx")
+  @@index([name], map: "event_name_idx")
+  @@map("events")
+}
+
+model EventUser {
+  id        BigInt   @id @default(autoincrement())
+  eventId   BigInt
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    BigInt
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([email], map: "email")
-  @@map("users")
+  @@index([eventId, userId], map: "event_user_event_id_user_id_idx")
+  @@map("event_user")
 }

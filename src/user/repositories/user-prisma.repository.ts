@@ -4,20 +4,16 @@ import { UserModel } from '../models/user.model';
 import { Prisma, User as PrismaUser } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 import { ListUsersParamsDTO } from '../dtos/list-users-params.dto';
+import { mapPrismaUserToModel } from '@/common/mappers/prisma/map-user-to-model';
+import { EventModel } from '@/events/models/event.model';
+import { mapPrismaEventToModel } from '@/common/mappers/prisma/map-event-to-model';
 
 @Injectable()
 export class UserPrismaRepository implements UserRepository {
   constructor(private readonly client: PrismaClient) {}
 
   private mapToModel(user: PrismaUser): UserModel {
-    return new UserModel({
-      id: Number(user.id),
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    });
+    return mapPrismaUserToModel(user);
   }
 
   private buildListQuery(dto: ListUsersParamsDTO): Prisma.UserWhereInput {
