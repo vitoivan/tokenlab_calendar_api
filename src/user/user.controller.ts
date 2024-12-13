@@ -9,6 +9,7 @@ import { DeleteUserByIdService } from './services/delete-user-by-id.service';
 import { UpdateUserDTO } from './dtos/update-user.dto';
 import { UpdateUserService } from './services/update-user.service';
 import { HttpLoggingInterceptor } from '@/common/middlewares/logging.interceptor';
+import { Public } from '@/common/decorators/public';
 
 @UseInterceptors(HttpLoggingInterceptor)
 @Controller('users')
@@ -27,10 +28,12 @@ export class UserController {
   }
 
   @Get('/:id')
-  async getById(@Param('id') id: number) {
-    return await this.getUserByIdService.execute(id);
+  async getById(@Param('id') id: number): Promise<UserResponse> {
+    const user = await this.getUserByIdService.execute(id);
+    return user.toResponse();
   }
 
+  @Public()
   @Post()
   async create(@Body() dto: CreateUserDTO): Promise<UserResponse> {
     const user = await this.createUserService.execute(dto);
@@ -44,7 +47,8 @@ export class UserController {
   }
 
   @Delete('/:id')
-  async deleteById(@Param('id') id: number) {
-    return await this.deleteUserByIdService.execute(id);
+  async deleteById(@Param('id') id: number): Promise<UserResponse> {
+    const user = await this.deleteUserByIdService.execute(id);
+    return user.toResponse();
   }
 }
