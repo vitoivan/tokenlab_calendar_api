@@ -1,5 +1,5 @@
-import { envConfig } from 'src/common/config';
-import { EnvironmentEnum } from 'src/common/enums/environment';
+import { envConfig } from '@/common/config';
+import { EnvironmentEnum } from '@/common/enums/environment';
 import { UserMemoryRepository } from './user-memory.repository';
 import { UserPrismaRepository } from './user-prisma.repository';
 import { Logger } from '@nestjs/common';
