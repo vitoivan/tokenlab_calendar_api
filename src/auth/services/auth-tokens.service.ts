@@ -19,7 +19,7 @@ export class AuthTokensService {
         name: user.name,
       },
       {
-        expiresIn: '1h',
+        expiresIn: '4h',
       },
     );
 
