@@ -1,5 +1,9 @@
 FROM node:20-slim
 
+ARG PORT
+
+ENV PORT=$PORT
+
 WORKDIR /app
 
 USER root
@@ -15,6 +19,8 @@ COPY --chown=node:node . .
 
 RUN npm run build
 
-EXPOSE 3000
+EXPOSE $PORT
 
-ENTRYPOINT ["npm", "run", "start:prod"]
+ENV NODE_ENV=production
+
+ENTRYPOINT ["sh", "entrypoint.sh"]
