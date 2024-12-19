@@ -71,4 +71,36 @@ export class EventsMemoryRepository implements EventsRepository {
 
     return new EventModel(newEvt);
   }
+
+  async getConflictingEvents(userId: number, start: Date, end: Date): Promise<EventModel[]> {
+    return this.events.filter((event) => {
+      if (event.ownerId !== userId) {
+        return false;
+      }
+
+      if (event.start > end || event.end < start) {
+        return false;
+      }
+
+      if (end < event.end && end > event.start) {
+        return true;
+      }
+
+      if (start > event.start && start < event.end) {
+        return true;
+      }
+
+      return true;
+    });
+  }
+
+  async eventUnsubscribe(eventId: number, userId: number): Promise<void> {
+    const index = this.events.findIndex((event) => event.id === eventId);
+    if (index === -1) {
+      return;
+    }
+    const event = this.events[index];
+    event.users = event.users.filter((user) => user.id !== userId);
+    this.events[index] = event;
+  }
 }

@@ -4,7 +4,6 @@ import { Injectable } from '@nestjs/common';
 import { EventsRepository } from '../ports/event-repository';
 import { EventModel } from '../models/event.model';
 import { mapPrismaEventToModel } from '@/common/mappers/prisma/map-event-to-model';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 type MapToModelParams = PrismaEvent & { owner?: User; EventUser?: (EventUser & { user?: User })[] };
 
@@ -211,5 +210,85 @@ export class EventsPrismaRepository implements EventsRepository {
     });
 
     return this.mapToModel(events);
+  }
+
+  async getConflictingEvents(userId: number, start: Date, end: Date): Promise<EventModel[]> {
+    const events = await this.client.event.findMany({
+      where: {
+        EventUser: {
+          some: {
+            userId,
+          },
+        },
+        OR: [
+          {
+            AND: [
+              {
+                start: {
+                  gte: start,
+                },
+              },
+              {
+                start: {
+                  lt: end,
+                },
+              },
+            ],
+          },
+          {
+            AND: [
+              {
+                end: {
+                  gt: start,
+                },
+              },
+              {
+                end: {
+                  lte: end,
+                },
+              },
+            ],
+          },
+          {
+            AND: [
+              {
+                start: {
+                  lte: start,
+                },
+              },
+              {
+                end: {
+                  gte: end,
+                },
+              },
+            ],
+          },
+          {
+            AND: [
+              {
+                start: {
+                  gte: start,
+                },
+              },
+              {
+                end: {
+                  lte: end,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    return events.map(this.mapToModel);
+  }
+
+  async eventUnsubscribe(eventId: number, userId: number): Promise<void> {
+    await this.client.eventUser.deleteMany({
+      where: {
+        AND: [{ eventId }, { userId }],
+      },
+    });
   }
 }

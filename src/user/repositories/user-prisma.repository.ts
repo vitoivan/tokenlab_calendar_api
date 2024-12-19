@@ -5,8 +5,6 @@ import { Prisma, User as PrismaUser } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 import { ListUsersParamsDTO } from '../dtos/list-users-params.dto';
 import { mapPrismaUserToModel } from '@/common/mappers/prisma/map-user-to-model';
-import { EventModel } from '@/events/models/event.model';
-import { mapPrismaEventToModel } from '@/common/mappers/prisma/map-event-to-model';
 
 @Injectable()
 export class UserPrismaRepository implements UserRepository {
@@ -20,6 +18,14 @@ export class UserPrismaRepository implements UserRepository {
     return {
       ...(dto.email ? { email: dto.email } : {}),
       ...(dto.name ? { name: { startsWith: dto.name, mode: 'insensitive' } } : {}),
+      ...(dto.search
+        ? {
+            OR: [
+              { name: { startsWith: dto.search, mode: 'insensitive' } },
+              { email: { contains: dto.search, mode: 'insensitive' } },
+            ],
+          }
+        : {}),
     };
   }
 

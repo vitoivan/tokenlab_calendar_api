@@ -2,6 +2,8 @@ import { EventModel } from '../models/event.model';
 
 export interface EventsRepository {
   getUserEvents(userId: number, start: Date, end: Date): Promise<EventModel[]>;
+  eventUnsubscribe(eventId: number, userId: number): Promise<void>;
+  getConflictingEvents(userId: number, start: Date, end: Date): Promise<EventModel[]>;
   getById(id: number): Promise<EventModel | null>;
   setUsers(id: number, users: number[]): Promise<EventModel>;
   create(event: EventModel): Promise<EventModel>;

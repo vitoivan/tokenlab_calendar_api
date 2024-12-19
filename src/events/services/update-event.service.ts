@@ -1,5 +1,5 @@
 import { EVENTS_REPOSITORY } from '@/common/constants/inject-tokens';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { EventsRepository } from '../ports/event-repository';
 import { EventModel } from '../models/event.model';
 import { UpdateEventDTO } from '../dtos/update-user.dto';
@@ -40,6 +40,15 @@ export class UpdateEventService {
 
     if (eventFound.start > eventFound.end) {
       throw new UnauthorizedException('start date cannot be later than end date');
+    }
+
+    const conflictingEvents = await this.eventsRepo.getConflictingEvents(ownerId, start, end);
+
+    if (conflictingEvents.length === 1 && conflictingEvents[0].id === eventFound.id) {
+      console.log('ignoring self conflict');
+      return await this.eventsRepo.update(eventFound);
+    } else if (conflictingEvents.length > 0) {
+      throw new ConflictException('conflicting events');
     }
 
     return await this.eventsRepo.update(eventFound);

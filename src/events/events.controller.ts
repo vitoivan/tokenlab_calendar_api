@@ -44,7 +44,7 @@ export class EventsController {
   }
 
   @Delete('/:id')
-  async delete(@Param('id') id: number): Promise<EventModel> {
-    return await this.deleteEventService.execute(id);
+  async delete(@Param('id') id: number, @User() user: UserModel): Promise<EventModel> {
+    return await this.deleteEventService.execute(id, user.id);
   }
 }

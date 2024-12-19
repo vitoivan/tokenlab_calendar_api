@@ -12,8 +12,14 @@ export class DeleteEventService {
     private readonly getEventByIdService: GetEventByIdService,
   ) {}
 
-  async execute(id: number): Promise<EventModel> {
+  async execute(id: number, userId: number): Promise<EventModel> {
     const eventFound = await this.getEventByIdService.execute(id);
+
+    if (eventFound.ownerId !== userId) {
+      await this.eventsRepo.eventUnsubscribe(eventFound.id, userId);
+      return eventFound;
+    }
+
     return await this.eventsRepo.delete(eventFound.id);
   }
 }

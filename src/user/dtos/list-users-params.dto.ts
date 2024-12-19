@@ -1,8 +1,12 @@
 import { Optional } from '@nestjs/common';
 import { Type } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class ListUsersParamsDTO {
+  @IsString()
+  @IsOptional()
+  search?: string;
+
   @IsEmail()
   @IsOptional()
   email: string;

@@ -23,7 +23,7 @@ describe('delete event service', () => {
 
   it('should return a not found error', async () => {
     try {
-      await deleteEventService.execute(1);
+      await deleteEventService.execute(1, 1);
       expect(true).toBe(false);
     } catch (e) {
       if (e instanceof HttpException) {
@@ -39,7 +39,7 @@ describe('delete event service', () => {
       start: new Date(),
       end: new Date(),
     });
-    const deleted = await deleteEventService.execute(1);
+    const deleted = await deleteEventService.execute(1, created.id);
     expect(created).toEqual(deleted);
   });
 });

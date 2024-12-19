@@ -1,5 +1,5 @@
 import { EVENTS_REPOSITORY } from '@/common/constants/inject-tokens';
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable } from '@nestjs/common';
 import { EventsRepository } from '../ports/event-repository';
 import { CreateEventDTO } from '../dtos/create-event.dto';
 import { EventModel } from '../models/event.model';
@@ -18,6 +18,12 @@ export class CreateEventService {
 
     if (start > end) {
       throw new BadRequestException('start date cannot be later than end date');
+    }
+
+    const conflictingEvents = await this.eventsRepo.getConflictingEvents(ownerId, start, end);
+
+    if (conflictingEvents.length > 0) {
+      throw new ConflictException('conflicting events');
     }
 
     const toCreate = new EventModel({

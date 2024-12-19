@@ -1,5 +1,5 @@
 import { AuthTokensService } from '@/auth/services/auth-tokens.service';
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, HttpException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { JsonWebTokenError } from '@nestjs/jwt';
@@ -47,6 +47,9 @@ export class AuthGuard implements CanActivate {
       request[USER_DEC] = user;
       return true;
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw new UnauthorizedException('invalid token');
+      }
       if (error instanceof JsonWebTokenError) {
         throw new UnauthorizedException('invalid token');
       }
