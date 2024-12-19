@@ -12,10 +12,12 @@ export class SetEventUsersService {
     private readonly getEventByIdService: GetEventByIdService,
   ) {}
 
-  async execute(eventId: number, users: number[]): Promise<EventModel> {
+  async execute(eventId: number, userIds: number[]): Promise<EventModel> {
     const event = await this.getEventByIdService.execute(eventId);
-    const updated = await this.eventsRepo.setUsers(event.id, users);
+
+    const ids = new Set([event.ownerId, ...userIds]);
+
+    const updated = await this.eventsRepo.setUsers(event.id, Array.from(ids));
     return updated;
-    // TDDO: send events to users
   }
 }
